@@ -4,9 +4,11 @@
 #	sudo apt-get install krb5-kdc krb5-admin-server haveged -y
 
 passwd="q123456"
+username="min"
 master_uname="master"
 slave_uname="slave"
 slave_num=2
+dir="/opt/key"
 #gen slave array. "slave1 skave2 slave3 ...."
 for sslave in `seq 1 1 $slave_num`;
 do
@@ -16,6 +18,24 @@ done
 #gen all set array
 all=$master_uname" "$slave
 #########################
+echo "================================================"
+echo "Check krb5 require file. and copy in config dir!"
+echo "================================================"
+if [ -f "./krb5.conf" ];
+then
+	/bin/cp ./krb5.conf /etc/krb5.conf
+else
+	echo "./krb5.conf not exist please clone it from github!"
+	exit
+fi
+if [ -f "./kdc.conf" ];
+then
+	/bin/cp ./kdc.conf /etc/krb5kdc/kdc.conf
+else
+	echo "./krb5.conf not exist please clone it from github!"
+        exit
+fi
+
 echo -e "$passwd\n$passwd\n" |krb5_newrealm
 echo "*/admin@master *" >>/etc/krb5kdc/kadm5.acl
 echo -e "$passwd\n$passwd" |kadmin.local -q "addprinc admin/admin"
@@ -41,16 +61,20 @@ done
 echo "======================================================================="
 echo "move key to /opt/key"
 echo "======================================================================="
-mkdir /opt/key
-mv *.keytab /opt/key
-chown -R `users|awk {'print $1'}`.`users|awk {'print $1'}` /opt/key
+if [ -d $dir ];
+then
+	rmdir $dir
+fi
+mkdir -p $dir
+mv *.keytab $dir
+chown -R `users|awk {'print $1'}`.`users|awk {'print $1'}` $dir
 
 #copy key to slave 
 echo "======================================================================="
 echo "start to copy key to slave"
 echo "======================================================================="
 for sHost in $slave ; do
-	scp -r /opt/key min@$sHost:/opt/ &
+	scp -r $dir $username@$sHost:/opt/ && scp /etc/krb5.conf $username@$sHost:/etc/ &&scp /etc/krb5kdc/kdc.conf $username@$sHost:/etc/krb5kdc/
 done
 
 #install require package
@@ -58,7 +82,7 @@ echo "======================================================================="
 echo "start to install krb5 in slave"
 echo "======================================================================="
 for sHost in $slave ; do
-        ssh -t $sHost "sudo apt-get install krb5-user krb5-config"
+        ssh -t $username@$sHost "sudo apt-get install krb5-user krb5-config -y"
 done
 
 
