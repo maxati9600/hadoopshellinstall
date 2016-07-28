@@ -18,6 +18,24 @@ done
 #gen all set array
 all=$master_uname" "$slave
 #########################
+#Check require package
+require_package="krb5-kdc krb5-admin-server haveged vim"
+for rp in $require_package ; do
+	tmp=""
+	tmp=`dpkg-query -l |awk '{print $2}'|grep $rp`
+	if [ -z "$tmp" ];
+	then
+		rpackage=$rpackage" "$rp
+	fi		
+done
+
+if [ -n "$rpackage" ]; then
+	echo "================================================"
+	echo "Something missing...Let automatic install it"
+	echo "================================================"
+	apt install $rpackage -y
+fi
+
 echo "================================================"
 echo "Check krb5 require file. and copy in config dir!"
 echo "================================================"
