@@ -92,7 +92,9 @@ echo "======================================================================="
 echo "start to copy key to slave"
 echo "======================================================================="
 for sHost in $slave ; do
-	scp -r $dir $username@$sHost:/opt/ && scp /etc/krb5.conf $username@$sHost:/etc/ &&scp /etc/krb5kdc/kdc.conf $username@$sHost:/etc/krb5kdc/
+	ssh -t $username@$sHost "sudo chmod  777 /etc"
+	scp -r $dir $username@$sHost:/opt/ && scp /etc/krb5.conf $username@$sHost:/etc &&scp /etc/krb5kdc/kdc.conf $username@$sHost:/etc/krb5kdc/
+	ssh -t $username@$sHost "sudo chmod  755 /etc"
 done
 
 #install require package
