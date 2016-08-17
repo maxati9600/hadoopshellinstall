@@ -57,7 +57,7 @@ fi
 
 echo -e "${passwd}\n${passwd}\n" |krb5_newrealm
 for host in ${all}; do
-	echo "*/${host}@${krb_realm} *\n" >>/etc/krb5kdc/kadm5.acl
+	echo "*/${host}@${krb_realm} *" >>/etc/krb5kdc/kadm5.acl
 done
 echo -e "${passwd}\n${passwd}" |kadmin.local -q "addprinc admin/admin"
 service krb5-admin-server restart
@@ -70,11 +70,11 @@ echo "======================================================================="
 for host in $all ;do
 	mkdir -p ${dir}"/"${host}
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey hdfs/$host@master"
-        kadmin.local -q "addpronc -randkey client/${host}@${krb_realm}"
-	kadmin.local -q "addpronc -randkey hdfs/${host}@${krb_realm}"
-        kadmin.local -q "addpronc -randkey mapred/${host}@${krb_realm}"
-        kadmin.local -q "addpronc -randkey HTTP/${host}@${krb_realm}"
-        kadmin.local -q "addpronc -randkey yarn/${host}@${krb_realm}"
+        kadmin.local -q "addprinc -randkey client/${host}@${krb_realm}"
+	kadmin.local -q "addprinc -randkey hdfs/${host}@${krb_realm}"
+        kadmin.local -q "addprinc -randkey mapred/${host}@${krb_realm}"
+        kadmin.local -q "addprinc -randkey HTTP/${host}@${krb_realm}"
+        kadmin.local -q "addprinc -randkey yarn/${host}@${krb_realm}"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey mapred/$host@master"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey HTTP/$host@master"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey yarn/$host@master"
