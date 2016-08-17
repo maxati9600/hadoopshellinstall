@@ -31,9 +31,11 @@ for rp in ${require_package} ; do
 done
 
 if [ -n "${rpackage}" ]; then
+	clear
 	echo "================================================"
 	echo "Something missing...Let automatic install it"
 	echo "================================================"
+	sleep 2
 	apt install ${rpackage} -y
 fi
 
@@ -70,50 +72,48 @@ echo "======================================================================="
 for host in $all ;do
 	mkdir -p ${dir}"/"${host}
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey hdfs/$host@master"
-        kadmin.local -q "addprinc -randkey client/${host}@${krb_realm}"
-	kadmin.local -q "addprinc -randkey hdfs/${host}@${krb_realm}"
-        kadmin.local -q "addprinc -randkey mapred/${host}@${krb_realm}"
-        kadmin.local -q "addprinc -randkey HTTP/${host}@${krb_realm}"
-        kadmin.local -q "addprinc -randkey yarn/${host}@${krb_realm}"
+	kadmin.local -q "addprinc -randkey hdfs/${host}"
+        kadmin.local -q "addprinc -randkey mapred/${host}"
+        kadmin.local -q "addprinc -randkey HTTP/${host}"
+        kadmin.local -q "addprinc -randkey yarn/${host}"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey mapred/$host@master"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey HTTP/$host@master"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey yarn/$host@master"
-	kadmin.local -q "xst -norandkey -k ${dir}/${host}/hdfs.keytab hdfs/${host}@${krb_realm}"
-        kadmin.local -q "xst -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}@${krb_realm}"
-        kadmin.local -q "xst -norandkey -k ${dir}/${host}/HTTP.keytab HTTP/${host}@${krb_realm}"
-        kadmin.local -q "xst -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}@${krb_realm}"
+	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/hdfs.keytab hdfs/${host}"
+        kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}"
+        kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/HTTP.keytab HTTP/${host}"
+        kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}"
 done
 #########
-exit 
 #move key in /opt/key and chang owner
 echo "======================================================================="
-echo "move key to /opt/key"
+echo "change key owner /opt/key"
 echo "======================================================================="
-if [ -d $dir ];
-then
-	rmdir $dir
-fi
-mkdir -p $dir
-mv *.keytab $dir
-chown -R `users|awk {'print $1'}`.`users|awk {'print $1'}` $dir
+#if [ -d $dir ];
+#then
+#	rmdir $dir
+#fi
+#mkdir -p $dir
+#mv *.keytab $dir
+chown -R `users|awk {'print $1'}`.`users|awk {'print $1'}` ${dir}
 
 #copy key to slave 
 echo "======================================================================="
 echo "start to copy key to slave"
 echo "======================================================================="
-for sHost in $slave ; do
-	ssh -t $username@$sHost "sudo chmod  777 /etc"
-	scp -r $dir $username@$sHost:/opt/ && scp /etc/krb5.conf $username@$sHost:/etc &&scp /etc/krb5kdc/kdc.conf $username@$sHost:/etc/krb5kdc/
+for sHost in ${slave} ; do
+	ssh -t ${username}@${sHost} "sudo chmod  777 /etc && sudo mkdir -p ${dir}"
+	scp $dir/${sHost}/* ${username}@${sHost}:${dir} && scp /etc/krb5.conf $username@$sHost:/etc &&scp /etc/krb5kdc/kdc.conf $username@$sHost:/etc/krb5kdc/
 	ssh -t $username@$sHost "sudo chmod  755 /etc"
 done
 
 #install require package
-echo "======================================================================="
-echo "start to install krb5 in slave"
-echo "======================================================================="
-for sHost in $slave ; do
-        ssh -t $username@$sHost "sudo apt-get install krb5-user krb5-config -y"
-done
+#echo "======================================================================="
+#echo "start to install krb5 in slave"
+#echo "======================================================================="
+#for sHost in $slave ; do
+#        ssh -t $username@$sHost "sudo apt-get install krb5-user krb5-config -y"
+#done
 
 
  
