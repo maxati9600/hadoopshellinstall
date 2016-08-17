@@ -78,10 +78,10 @@ for host in $all ;do
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey mapred/$host@master"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey HTTP/$host@master"
 #	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey yarn/$host@master"
-	kadmin.local -q "xst -norandkey -k ${dir}/${host}/hdfs.keytab hdfs/${host}@${krb_realm} client/${host}@${krb_realm}"
-        kadmin.local -q "xst -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}@${krb_realm} client/${host}@${krb_realm}"
-        kadmin.local -q "xst -norandkey -k ${dir}/${host}/HTTP.keytab HTTP/${host}@${krb_realm} client/${host}@${krb_realm}"
-        kadmin.local -q "xst -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}@${krb_realm} client/${host}@${krb_realm}"	
+	kadmin.local -q "xst -norandkey -k ${dir}/${host}/hdfs.keytab hdfs/${host}@${krb_realm}"
+        kadmin.local -q "xst -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}@${krb_realm}"
+        kadmin.local -q "xst -norandkey -k ${dir}/${host}/HTTP.keytab HTTP/${host}@${krb_realm}"
+        kadmin.local -q "xst -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}@${krb_realm}"
 done
 #########
 exit 
