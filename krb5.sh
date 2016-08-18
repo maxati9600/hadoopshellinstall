@@ -33,10 +33,10 @@ done
 if [ -n "${rpackage}" ]; then
 	clear
 	echo "================================================"
-	echo "Something missing...Let automatic install it"
+	echo "Something missing...automatic install it"
 	echo "================================================"
 	sleep 2
-	apt install ${rpackage} -y
+	apt-get install ${rpackage} -y
 fi
 
 echo "================================================"
@@ -71,14 +71,10 @@ echo "generate key for all machine"
 echo "======================================================================="
 for host in $all ;do
 	mkdir -p ${dir}"/"${host}
-#	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey hdfs/$host@master"
 	kadmin.local -q "addprinc -randkey hdfs/${host}"
         kadmin.local -q "addprinc -randkey mapred/${host}"
         kadmin.local -q "addprinc -randkey HTTP/${host}"
         kadmin.local -q "addprinc -randkey yarn/${host}"
-#	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey mapred/$host@master"
-#	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey HTTP/$host@master"
-#	echo -e "$passwd" |kadmin -p admin/admin -q "addprinc -randkey yarn/$host@master"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/hdfs.keytab hdfs/${host}"
         kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}"
         kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/HTTP.keytab HTTP/${host}"
@@ -86,15 +82,10 @@ for host in $all ;do
 done
 #########
 #move key in /opt/key and chang owner
+########
 echo "======================================================================="
 echo "change key owner /opt/key"
 echo "======================================================================="
-#if [ -d $dir ];
-#then
-#	rmdir $dir
-#fi
-#mkdir -p $dir
-#mv *.keytab $dir
 chown -R `users|awk {'print $1'}`.`users|awk {'print $1'}` ${dir}
 
 #copy key to slave 
@@ -102,18 +93,10 @@ echo "======================================================================="
 echo "start to copy key to slave"
 echo "======================================================================="
 for sHost in ${slave} ; do
-	ssh -t ${username}@${sHost} "sudo chmod  777 /etc && sudo mkdir -p ${dir}"
-	scp $dir/${sHost}/* ${username}@${sHost}:${dir} && scp /etc/krb5.conf $username@$sHost:/etc &&scp /etc/krb5kdc/kdc.conf $username@$sHost:/etc/krb5kdc/
-	ssh -t $username@$sHost "sudo chmod  755 /etc"
+	echo "Start copy to"${sHost}
+	ssh -t ${username}@${sHost} "sudo mkdir -p ${dir} && sudo chown ${username}.${username} ${dir}"
+	scp $dir/${sHost}/* ${username}@${sHost}:${dir}/ 
 done
-
-#install require package
-#echo "======================================================================="
-#echo "start to install krb5 in slave"
-#echo "======================================================================="
-#for sHost in $slave ; do
-#        ssh -t $username@$sHost "sudo apt-get install krb5-user krb5-config -y"
-#done
 
 
  
