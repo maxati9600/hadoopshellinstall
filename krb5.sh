@@ -11,6 +11,11 @@ slave_uname="slave"
 slave_num=2
 dir="/opt/key"
 #gen slave array. "slave1 skave2 slave3 ...."
+if [ $EUID -ne 0 ];then
+	echo "This script must be run as root."
+	echo "Run 'sudo su' and run this script again."
+	exit 1
+fi
 for sslave in `seq 1 1 ${slave_num}`;
 do
 	slave=${slave}" "${slave_uname}${sslave}
