@@ -89,12 +89,17 @@ echo "======================================================================="
 chown -R `users|awk {'print $1'}`.`users|awk {'print $1'}` ${dir}
 
 #copy key to slave 
+sleep 5
+clear
 echo "======================================================================="
 echo "start to copy key to slave"
 echo "======================================================================="
 for sHost in ${slave} ; do
-	echo "Start copy to"${sHost}
+	echo "Start copy to "${sHost}
+	echo "mkdir for hadoop "${sHost}":"${dir}" owner:"${username}
+	echo "You might need to enter ${sHost}'s root password "
 	ssh -t ${username}@${sHost} "sudo mkdir -p ${dir} && sudo chown ${username}.${username} ${dir}"
+	echo "file copy"
 	scp $dir/${sHost}/* ${username}@${sHost}:${dir}/ 
 done
 
