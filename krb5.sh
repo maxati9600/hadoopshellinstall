@@ -103,7 +103,7 @@ for sHost in ${slave} ; do
 	echo "Start copy to "${sHost}
 	echo "mkdir for hadoop "${sHost}":"${dir}" owner:"${username}
 	echo "You might need to enter ${sHost}'s root password "
-	ssh -t ${username}@${sHost} "sudo mkdir -p ${dir} && sudo chown ${username}.${username} ${dir}"
+	ssh -t ${username}@${sHost} "sudo mkdir -p ${dir} && sudo chown ${username}.${username} ${dir} && sudo apt-get install krb5-user krb5-config -y"
 	echo "file copy"
 	scp $dir/${sHost}/* ${username}@${sHost}:${dir}/ 
 done
