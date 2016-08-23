@@ -6,7 +6,7 @@
 passwd="q123456"
 username="min"
 master_uname="master"
-krb_realm="master"
+krb_realm="MIN.LOCAL"
 slave_uname="slave"
 slave_num=2
 dir="/opt/key"
@@ -61,14 +61,13 @@ else
 	echo "./krb5.conf not exist please clone it from github!"
         exit
 fi
-
-echo -e "${passwd}\n${passwd}\n" |krb5_newrealm
 for host in ${all}; do
 	echo "*/${host}@${krb_realm} *" >>/etc/krb5kdc/kadm5.acl
 done
-echo -e "${passwd}\n${passwd}" |kadmin.local -q "addprinc admin/admin"
 service krb5-admin-server restart
-echo -e "${passwd}" |kinit admin/admin
+echo -e "${passwd}\n${passwd}\n" |krb5_newrealm
+echo -e "${passwd}\n${passwd}" |kadmin.local -q "addprinc admin/master"
+echo -e "${passwd}" |kinit admin/master
 klist
 #create all key for all host
 echo "======================================================================="
