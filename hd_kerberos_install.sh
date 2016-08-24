@@ -3,7 +3,7 @@ client_list="slave1 slave2"
 master_name="master"
 master_user="min"
 client_user="min"
-
+krb5_realm="MIN.LOCAL"
 if [ -f "/opt/${filename}" ];then
         echo "Start.."
         sleep 3
@@ -70,11 +70,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
     <name>dfs.namenode.kerberos.principal</name>
-    <value>hdfs/_HOST@master</value>
+    <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
     <name>dfs.namenode.kerberos.https.principal</name>
-    <value>HTTP/_HOST@master</value>
+    <value>HTTP/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
     <name>dfs.datanode.keytab.file</name>
@@ -82,11 +82,11 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
     <name>dfs.datanode.kerberos.principal</name>
-    <value>hdfs/_HOST@master</value>
+    <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
     <name>dfs.datanode.kerberos.https.principal</name>
-    <value>HTTP/_HOST@master</value>
+    <value>HTTP/_HOST@'${krb5_realm}'</value>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
@@ -108,7 +108,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>  
 <property>  
     <name>mapreduce.jobhistory.principal</name>  
-    <value>mapred/_HOST@master</value>  
+    <value>mapred/_HOST@'${krb5_realm}'</value>  
 </property>  
 </configuration>' > /opt/hadoop/etc/hadoop/mapred-site.xml
 
@@ -146,7 +146,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>  
 <property>  
     <name>yarn.resourcemanager.principal</name>  
-    <value>yarn/_HOST@master</value>  
+    <value>yarn/_HOST@'${krb5_realm}'</value>  
 </property>  
 <property>  
     <name>yarn.nodemanager.keytab</name>  
@@ -154,7 +154,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>  
 <property>  
     <name>yarn.nodemanager.principal</name>  
-    <value>yarn/_HOST@master</value>  
+    <value>yarn/_HOST@'${krb5_realm}'</value>  
 </property>  
 <property>  
     <name>yarn.nodemanager.container-executor.class</name>  
