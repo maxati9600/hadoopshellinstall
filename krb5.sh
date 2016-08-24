@@ -106,6 +106,4 @@ for sHost in ${slave} ; do
 	echo "file copy"
 	scp $dir/${sHost}/* ${username}@${sHost}:${dir}/ 
 done
-
-
- 
+mv /opt/key/${master_uname}/* /opt/key/

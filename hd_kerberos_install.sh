@@ -1,4 +1,13 @@
-tar -C /opt -zxvf hadoop-2.7.2.tar.gz
+filename = "hadoop-2.7.2.tar.gz"
+if [ -f "/opt/${filename}" ];then
+	echo "Start.."
+	sleep 3
+else
+	echo "hadoop install file in path '/opt/${filename}' is missing.."
+	echo "Please download/fixfilename it and restart command"
+	exit
+fi
+tar -C /opt -zxvf /opt/${filename}
 mv /opt/hadoop-2.7.2 /opt/hadoop
 mkdir -p /opt/hadoop/tmp
 mkdir -p /opt/hadoop/dfs/dn
@@ -50,7 +59,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
     <name>dfs.namenode.keytab.file</name>
-    <value>hdfs.keytab</value>
+    <value>/opt/key/hdfs.keytab</value>
 </property>
 <property>
     <name>dfs.namenode.kerberos.principal</name>
@@ -62,7 +71,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
     <name>dfs.datanode.keytab.file</name>
-    <value>hdfs.keytab</value>
+    <value>/opt/key/hdfs.keytab</value>
 </property>
 <property>
     <name>dfs.datanode.kerberos.principal</name>
