@@ -7,11 +7,15 @@ else
         echo "Please download/fix filename it and restart command"
         exit
 fi
-
+if [ -d "/opt/hadoop" ];then
+	rm -rf "/opt/hadoop/"
+fi
+if [ -d "/opt/hadoop-2.7.2" ];then
+        rm -rf "/opt/hadoop-2.7.2"
+fi
 echo "Start unzip hadoop file.."
 tar -C /opt -zxf /opt/${filename}
 echo "Moving folder to /opt/hadoop/"
-
 mv /opt/hadoop-2.7.2 /opt/hadoop
 echo "Create folder for hadoop"
 mkdir -p /opt/hadoop/tmp
