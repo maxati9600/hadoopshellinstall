@@ -1,4 +1,9 @@
 filename="hadoop-2.7.2.tar.gz"
+client_list="slave1 slave2"
+master_name="master"
+master_user="min"
+client_user="min"
+
 if [ -f "/opt/${filename}" ];then
         echo "Start.."
         sleep 3
@@ -166,3 +171,9 @@ echo 'slave1
 slave2' > /opt/hadoop/etc/hadoop/slaves
 
 sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
+echo "\n\n\n=========================================="
+echo "start to copy dir to all client"
+echo "=========================================="
+for client_name in client_list; do
+	ssh ${client_user}@${client_name}-t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/"
+done
