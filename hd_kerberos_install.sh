@@ -1,29 +1,35 @@
-filename = "hadoop-2.7.2.tar.gz"
+filename="hadoop-2.7.2.tar.gz"
 if [ -f "/opt/${filename}" ];then
-	echo "Start.."
-	sleep 3
+        echo "Start.."
+        sleep 3
 else
-	echo "hadoop install file in path '/opt/${filename}' is missing.."
-	echo "Please download/fixfilename it and restart command"
-	exit
+        echo "hadoop install file in path '/opt/${filename}' is missing.."
+        echo "Please download/fix filename it and restart command"
+        exit
 fi
-tar -C /opt -zxvf /opt/${filename}
+
+echo "Start unzip hadoop file.."
+tar -C /opt -zxf /opt/${filename}
+echo "Moving folder to /opt/hadoop/"
+
 mv /opt/hadoop-2.7.2 /opt/hadoop
+echo "Create folder for hadoop"
 mkdir -p /opt/hadoop/tmp
 mkdir -p /opt/hadoop/dfs/dn
 mkdir -p /opt/hadoop/dfs/nn
-
+mkdir -p /opt/hadoop/yarnnm
+echo "Setting hadoop configure"
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
-<property>
-    <name>fs.defaultFS</name>
-    <value>hdfs://master:9000</value>
-</property>
-<property>
+  <property>
     <name>hadoop.tmp.dir</name>
     <value>file:/opt/hadoop/tmp</value>
-</property>
+  </property>
+  <property>
+    <name>fs.default.name</name>
+    <value>hdfs://master:54310</value>
+  </property>
 <property>
     <name>hadoop.security.authentication</name>
     <value>kerberos</value>
@@ -50,14 +56,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <value>2</value>
 </property>
 <property>
-    <name>dfs.namenode.secondary.http-address</name>
-    <value>master:50090</value>
-</property>
-<property>
-    <name>dfs.webhdfs.enabled</name>
-    <value>true</value>
-</property>
-<property>
     <name>dfs.namenode.keytab.file</name>
     <value>/opt/key/hdfs.keytab</value>
 </property>
@@ -81,7 +79,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <name>dfs.datanode.kerberos.https.principal</name>
     <value>HTTP/_HOST@master</value>
 </property>
-
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
@@ -89,16 +86,12 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
 <property>
+ <name>mapred.job.tracker</name>
+    <value>master:54311</value>
+</property>
+<property>
     <name>mapreduce.framework.name</name>
     <value>yarn</value>
-</property>
-<property>
-    <name>mapreduce.jobhistory.address</name>
-    <value>master:10020</value>
-</property>
-<property>
-    <name>mapreduce.jobhistory.webapp.address</name>
-    <value>master:19888</value>
 </property>
 <property>  
     <name>mapreduce.jobhistory.keytab</name>  
@@ -118,34 +111,26 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
 </property>
-<property>
-    <name>yarn.nodemanager.auxservices.mapreduce.shuffle.class</name>
-    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
-</property>
-<property>
-    <name>yarn.resourcemanager.address</name>
-    <value>master:8032</value>
-</property>
-<property>
+ <property>
     <name>yarn.resourcemanager.scheduler.address</name>
     <value>master:8030</value>
-</property>
-<property>
-    <name>yarn.resourcemanager.resource-tracker.address</name>
-    <value>master:8031</value>
-</property>
-<property>
-    <name>yarn.resourcemanager.admin.address</name>
-    <value>master:8033</value>
-</property>
-<property>
+  </property> 
+  <property>
+    <name>yarn.resourcemanager.address</name>
+    <value>master:8032</value>
+  </property>
+  <property>
     <name>yarn.resourcemanager.webapp.address</name>
     <value>master:8088</value>
-</property>
-<property>
-    <name>yarn.nodemanager.resource.memory-mb</name>
-    <value>768</value>
-</property>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>master:8031</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.admin.address</name>
+    <value>master:8033</value>
+  </property>
 <property>  
     <name>yarn.resourcemanager.keytab</name>  
     <value>/opt/key/yarn.keytab</value>  
@@ -170,9 +155,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <name>yarn.nodemanager.linux-container-executor.group</name>  
     <value>hadoop</value>  
 </property> 
+
 </configuration>' > /opt/hadoop/etc/hadoop/yarn-site.xml
 
 echo 'slave1
 slave2' > /opt/hadoop/etc/hadoop/slaves
 
-
+sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
