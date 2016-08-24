@@ -171,9 +171,10 @@ echo 'slave1
 slave2' > /opt/hadoop/etc/hadoop/slaves
 
 sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
-echo "\n\n\n=========================================="
+echo "=========================================="
 echo "start to copy dir to all client"
 echo "=========================================="
-for client_name in client_list; do
-	ssh ${client_user}@${client_name}-t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/"
+for client_name in ${client_list}; do
+	echo "Now is copy file to ${client_name}"
+	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null"
 done
