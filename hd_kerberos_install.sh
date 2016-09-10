@@ -4,6 +4,9 @@ master_name="master"
 master_user="min"
 client_user="min"
 krb5_realm="MIN.LOCAL"
+keystore_pass='zz001234'
+truststore_pass='zz001234'
+cert_signed_passwd='zz001234'
 if [ -f "/opt/${filename}" ];then
         echo "Start.."
         sleep 3
