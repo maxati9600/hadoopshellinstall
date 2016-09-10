@@ -27,6 +27,7 @@ mkdir -p /opt/hadoop/tmp
 mkdir -p /opt/hadoop/dfs/dn
 mkdir -p /opt/hadoop/dfs/nn
 mkdir -p /opt/hadoop/yarnnm
+mkdir -p /opt/key/ca
 echo "Setting hadoop configure"
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -87,6 +88,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 <property>
     <name>dfs.datanode.kerberos.https.principal</name>
     <value>HTTP/_HOST@'${krb5_realm}'</value>
+</property>
+<property>
+    <name>dfs.http.policy</name>
+    <value>HTTP_AND_HTTPS</value>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
@@ -169,12 +174,61 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 
 echo 'slave1
 slave2' > /opt/hadoop/etc/hadoop/slaves
+echo '<configuration>
+<property>
+    <name>ssl.server.keystore.type</name>
+    <value>jks</value>
+</property>
+<property>
+    <name>ssl.server.keystore.keypassword</name>
+    <value>'.${keystore_pass}.'</value>
+</property>
+<property>
+    <name>ssl.server.keystore.location</name>
+    <value>/opt/key/ca/keystore</value>
+</property>
+<property>
+    <name>ssl.server.truststore.type</name>
+    <value>jks</value>
+</property>
+<property>
+    <name>ssl.server.truststore.location</name>
+    <value>/opt/key/ca/truststore</value>
+</property>
+<property>
+    <name>ssl.server.truststore.password</name>
+    <value>'.${truststore_pass}.'</value>
+</property>
+</configuration>' > /opt/hadoop/etc/hadoop/ssl-server.xml
 
+echo '<configuration>
+<property>
+    <name>ssl.client.truststore.password</name>
+    <value>'.${truststore_pass}.'</value>
+</property>
+<property>
+    <name>ssl.client.truststore.type</name>
+    <value>jks</value>
+</property>
+<property>
+    <name>ssl.client.truststore.location</name>
+    <value>/opt/key/ca/truststore</value>
+</property>
+</configuration>' > /opt/hadoop/etc/hadoop/ssl-client.xml
 sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
+
+openssl req -new -x509 -keyout /opt/key/ca/test_ca_key -out /opt/key/ca/test_ca_cert -days 9999 -subj '/C=TW/ST=Taipei/L=ccu/O=ccu/OU=ant/CN='.${krb5_realm}
+keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname "CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW"
+keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert
+keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert
+openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:${cert_signed_passwd}
+keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert
+keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed
 echo "=========================================="
 echo "start to copy dir to all client"
 echo "=========================================="
 for client_name in ${client_list}; do
 	echo "Now is copy file to ${client_name}"
-	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null"
+	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null"
+	ssh ${client_user}@${client_name} -t "keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname 'CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW' && keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert && keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert && openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:${cert_signed_passwd} && keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert && keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed && chown -R \`users|awk {'print \$1'}\`.\`users|awk {'print \$1'}\` /opt/key"
 done
