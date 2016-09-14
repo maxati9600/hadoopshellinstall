@@ -7,6 +7,11 @@ krb5_realm="MIN.LOCAL"
 keystore_pass='zz001234'
 truststore_pass='zz001234'
 cert_signed_passwd='zz001234'
+if [ -z $EUID ];then
+        echo "This script shoulen't been run as root."
+        echo "Run 'sudo su' and run this script again."
+        exit 1
+fi
 if [ -f "/opt/${filename}" ];then
         echo "Start.."
         sleep 3
@@ -219,7 +224,7 @@ echo '<configuration>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/ssl-client.xml
 sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
-
+echo -e "${keystorn_pass}\n${keystorn_pass}"|openssl req -new -x509 -keyout /opt/key/ca/test_ca_key -out /opt/key/ca/test_ca_cert -days 9999 -subj '/C=TW/ST=Taipei/L=ccu/O=ccu/OU=ant/CN=min.local'
 echo "=========================================="
 echo "start to copy dir to all client"
 echo "=========================================="
@@ -231,7 +236,7 @@ for client_name in ${client_list}; do
 	echo "==========================================="
 	echo "produce CA for ${client_name}"
 	echo "==========================================="
-	ssh ${client_user}@${client_name} -t "echo -e \"${keystore_pass}\n${keystore_pass}\n${keystore_pass}\n${keystore_pass}\n\" | keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname \"CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW\"&& echo -e \"${keystore_pass}\n${keystore_pass}\nY\"|keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert && echo -e \"${keystore_pass}\"|keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert && openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:${keystore_pass} && echo -e \"${keystore_pass}\nY\"|keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert && echo -e \"${keystore_pass}\" |keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed"
+	ssh ${client_user}@${client_name} -t 'echo -e "'${keystore_pass}'\n'${keystore_pass}'\n'${keystore_pass}'\n'${keystore_pass}'\n" | keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname "CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW"&& echo -e "${keystore_pass}\n'${keystore_pass}'\nY"|keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert && echo -e "'${keystore_pass}'"|keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert && openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:'${keystore_pass}' && echo -e "'${keystore_pass}'\nY"|keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert && echo -e "'${keystore_pass}'" |keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed'
 done
 echo "==========================================="
 echo "produce CA for local host"
