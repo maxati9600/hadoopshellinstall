@@ -224,7 +224,7 @@ echo '<configuration>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/ssl-client.xml
 sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
-echo -e "${keystorn_pass}\n${keystorn_pass}"|openssl req -new -x509 -keyout /opt/key/ca/test_ca_key -out /opt/key/ca/test_ca_cert -days 9999 -subj '/C=TW/ST=Taipei/L=ccu/O=ccu/OU=ant/CN=min.local'
+openssl req -new -x509 -keyout /opt/key/ca/test_ca_key -out /opt/key/ca/test_ca_cert -days 9999 -subj '/C=TW/ST=Taipei/L=ccu/O=ccu/OU=ant/CN=min.local' -passout pass:${keystore_pass}
 echo "=========================================="
 echo "start to copy dir to all client"
 echo "=========================================="
