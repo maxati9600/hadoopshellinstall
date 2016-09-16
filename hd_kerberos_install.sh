@@ -82,10 +82,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
-    <name>dfs.namenode.kerberos.https.principal</name>
-    <value>HTTP/_HOST@'${krb5_realm}'</value>
-</property>
-<property>
     <name>dfs.datanode.keytab.file</name>
     <value>/opt/key/hdfs.keytab</value>
 </property>
@@ -93,18 +89,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <name>dfs.datanode.kerberos.principal</name>
     <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
-<property>
-    <name>dfs.datanode.kerberos.https.principal</name>
-    <value>HTTP/_HOST@'${krb5_realm}'</value>
-</property>
-<property>
-    <name>dfs.https.port</name>
-    <value>50470</value>
-</property>
-<property>
-    <name>dfs.namenode.https-address</name>
-    <value>master:50470</value>
-</property>
+<property> 
+     <name>dfs.secondary.https.port</name> 
+     <value>50490</value> 
+</property> 
 <property>
     <name>dfs.http.policy</name>
     <value>HTTPS_ONLY</value>
@@ -124,6 +112,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 <property>
   <name>dfs.block.access.token.enable</name>
   <value>true</value>
+</property>
+<property> 
+     <name>dfs.https.port</name> 
+     <value>50470</value> 
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
