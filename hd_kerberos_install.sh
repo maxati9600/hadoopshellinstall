@@ -99,7 +99,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
     <name>dfs.http.policy</name>
-    <value>HTTP_AND_HTTPS</value>
+    <value>HTTPS_ONLY</value>
 </property>
 <property>
   <name>dfs.webhdfs.enabled</name>
