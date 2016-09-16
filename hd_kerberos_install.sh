@@ -98,6 +98,14 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <value>HTTP/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
+    <name>dfs.https.port</name>
+    <value>50470</value>
+</property>
+<property>
+    <name>dfs.namenode.https-address</name>
+    <value>master:50470</value>
+</property>
+<property>
     <name>dfs.http.policy</name>
     <value>HTTPS_ONLY</value>
 </property>
