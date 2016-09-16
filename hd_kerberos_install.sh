@@ -113,6 +113,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
   <name>dfs.web.authentication.kerberos.keytab</name>
   <value>/opt/key/HTTP.keytab</value>
 </property>
+<property>
+  <name>dfs.block.access.token.enable</name>
+  <value>true</value>
+</property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
