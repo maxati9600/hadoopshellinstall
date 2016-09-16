@@ -101,6 +101,18 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <name>dfs.http.policy</name>
     <value>HTTP_AND_HTTPS</value>
 </property>
+<property>
+  <name>dfs.webhdfs.enabled</name>
+  <value>true</value>
+</property>
+<property>
+  <name>dfs.web.authentication.kerberos.principal</name>
+  <value>HTTP/_HOST@${krb5_realm}</value>
+</property>
+<property>
+  <name>dfs.web.authentication.kerberos.keytab</name>
+  <value>/opt/key/HTTP.keytab</value>
+</property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
