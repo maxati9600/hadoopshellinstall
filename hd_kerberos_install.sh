@@ -115,7 +115,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
   <name>dfs.web.authentication.kerberos.principal</name>
-  <value>HTTP/_HOST@${krb5_realm}</value>
+  <value>HTTP/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
   <name>dfs.web.authentication.kerberos.keytab</name>
