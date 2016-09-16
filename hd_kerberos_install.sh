@@ -205,7 +205,7 @@ echo '<configuration>
 </property>
 <property>
     <name>ssl.server.keystore.keypassword</name>
-    <value>'.${keystore_pass}.'</value>
+    <value>'${keystore_pass}'</value>
 </property>
 <property>
     <name>ssl.server.keystore.location</name>
@@ -221,14 +221,14 @@ echo '<configuration>
 </property>
 <property>
     <name>ssl.server.truststore.password</name>
-    <value>'.${truststore_pass}.'</value>
+    <value>'${truststore_pass}'</value>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/ssl-server.xml
 
 echo '<configuration>
 <property>
     <name>ssl.client.truststore.password</name>
-    <value>'.${truststore_pass}.'</value>
+    <value>'${truststore_pass}'</value>
 </property>
 <property>
     <name>ssl.client.truststore.type</name>
