@@ -103,7 +103,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
   <name>dfs.webhdfs.enabled</name>
-  <value>true</value>
+  <value>false</value>
 </property>
 <property>
   <name>dfs.web.authentication.kerberos.principal</name>
