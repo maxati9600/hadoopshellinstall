@@ -113,6 +113,20 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
   <name>dfs.block.access.token.enable</name>
   <value>true</value>
 </property>
+<!-- datanode -->
+<property>
+  <name>dfs.datanode.address</name>
+  <value>0.0.0.0:61004</value>
+</property>
+<property>
+  <name>dfs.datanode.http.address</name>
+  <value>0.0.0.0:61006</value>
+</property>
+<property>
+  <name>dfs.data.transfer.protection</name>
+  <value>integrity</value>
+</property>
+<!-- datanode-->
 <property> 
      <name>dfs.https.port</name> 
      <value>50470</value> 
