@@ -131,6 +131,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
      <name>dfs.https.port</name> 
      <value>50470</value> 
 </property>
+<property>
+     <name>dfs.https.address</name>
+     <value>master</value>
+</property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
