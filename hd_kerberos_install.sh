@@ -58,7 +58,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/core-site.xml
 
-echo'<?xml version="1.0" encoding="UTF-8"?>
+echo '<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
 <property>
@@ -103,7 +103,7 @@ echo'<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
   <name>dfs.webhdfs.enabled</name>
-  <value>true</value>
+  <value>false</value>
 </property>
 <property>
   <name>dfs.web.authentication.kerberos.principal</name>
@@ -117,7 +117,7 @@ echo'<?xml version="1.0" encoding="UTF-8"?>
   <name>dfs.block.access.token.enable</name>
   <value>true</value>
 </property>
-</configuration>'> /opt/hadoop/etc/hadoop/hdfs-site.xml
+</configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
 echo '<?xml version="1.0" encoding="UTF-8"?>
