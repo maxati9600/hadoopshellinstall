@@ -58,7 +58,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/core-site.xml
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
+echo'<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <configuration>
 <property>
@@ -82,6 +82,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
+    <name>dfs.namenode.kerberos.https.principal</name>
+    <value>HTTP/_HOST@'${krb5_realm}'</value>
+</property>
+<property>
     <name>dfs.datanode.keytab.file</name>
     <value>/opt/key/hdfs.keytab</value>
 </property>
@@ -90,12 +94,20 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
 <property>
+    <name>dfs.datanode.kerberos.https.principal</name>
+    <value>HTTP/_HOST@'${krb5_realm}'</value>
+</property>
+<property>
+    <name>dfs.http.policy</name>
+    <value>HTTP_AND_HTTPS</value>
+</property>
+<property>
   <name>dfs.webhdfs.enabled</name>
-  <value>false</value>
+  <value>true</value>
 </property>
 <property>
   <name>dfs.web.authentication.kerberos.principal</name>
-  <value>HTTP/_HOST@'${krb5_realm}'</value>
+  <value>HTTP/_HOST@${krb5_realm}</value>
 </property>
 <property>
   <name>dfs.web.authentication.kerberos.keytab</name>
@@ -105,81 +117,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
   <name>dfs.block.access.token.enable</name>
   <value>true</value>
 </property>
-<!-- datanode -->
-<property>
-  <name>dfs.namenode.secondary.http-address</name>
-  <value>0.0.0.0:50090</value>
-</property>
-
-<property>
-  <name>dfs.namenode.secondary.https-address</name>
-  <value>0.0.0.0:50091</value>
-</property>
-
-<property>
-  <name>dfs.datanode.address</name>
-  <value>0.0.0.0:50010</value>
-</property>
-
-<property>
-  <name>dfs.datanode.http.address</name>
-  <value>0.0.0.0:50075</value>
-</property>
-
-<property>
-  <name>dfs.datanode.ipc.address</name>
-  <value>0.0.0.0:50020</value>
-</property>
-
-<property>
-  <name>dfs.datanode.handler.count</name>
-  <value>10</value>
-</property>
-
-<property>
-  <name>dfs.namenode.http-address</name>
-  <value>0.0.0.0:50070</value>
-</property>
-
-<property>
-  <name>dfs.https.enable</name>
-  <value>true</value>
-</property>
-<property>
-  <name>dfs.http.policy</name>
-  <value>HTTPS_ONLY</value>
-</property>
-
-<property>
-  <name>dfs.client.https.need-auth</name>
-  <value>false</value>
-</property>
-
-<property>
-  <name>dfs.client.cached.conn.retry</name>
-  <value>3</value>
-</property>
-<property>
-  <name>dfs.https.server.keystore.resource</name>
-  <value>ssl-server.xml</value>
-</property>
-
-<property>
-  <name>dfs.client.https.keystore.resource</name>
-  <value>ssl-client.xml</value>
-</property>
-
-<property>
-  <name>dfs.datanode.https.address</name>
-  <value>0.0.0.0:50475</value>
-</property>
-<property>
-  <name>dfs.namenode.https-address</name>
-  <value>0.0.0.0:50470</value>
-</property>
-
-<!-- datanode-->
-</configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
+</configuration>'> /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
 echo '<?xml version="1.0" encoding="UTF-8"?>
