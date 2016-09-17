@@ -89,14 +89,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <name>dfs.datanode.kerberos.principal</name>
     <value>hdfs/_HOST@'${krb5_realm}'</value>
 </property>
-<property> 
-     <name>dfs.secondary.https.port</name> 
-     <value>50490</value> 
-</property> 
-<property>
-    <name>dfs.http.policy</name>
-    <value>HTTPS_ONLY</value>
-</property>
 <property>
   <name>dfs.webhdfs.enabled</name>
   <value>true</value>
@@ -115,26 +107,78 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <!-- datanode -->
 <property>
-  <name>dfs.datanode.address</name>
-  <value>0.0.0.0:61004</value>
+  <name>dfs.namenode.secondary.http-address</name>
+  <value>0.0.0.0:50090</value>
 </property>
+
+<property>
+  <name>dfs.namenode.secondary.https-address</name>
+  <value>0.0.0.0:50091</value>
+</property>
+
+<property>
+  <name>dfs.datanode.address</name>
+  <value>0.0.0.0:50010</value>
+</property>
+
 <property>
   <name>dfs.datanode.http.address</name>
-  <value>0.0.0.0:61006</value>
+  <value>0.0.0.0:50075</value>
+</property>
+
+<property>
+  <name>dfs.datanode.ipc.address</name>
+  <value>0.0.0.0:50020</value>
+</property>
+
+<property>
+  <name>dfs.datanode.handler.count</name>
+  <value>10</value>
+</property>
+
+<property>
+  <name>dfs.namenode.http-address</name>
+  <value>0.0.0.0:50070</value>
+</property>
+
+<property>
+  <name>dfs.https.enable</name>
+  <value>true</value>
 </property>
 <property>
-  <name>dfs.data.transfer.protection</name>
-  <value>integrity</value>
+  <name>dfs.http.policy</name>
+  <value>HTTPS_ONLY</value>
 </property>
+
+<property>
+  <name>dfs.client.https.need-auth</name>
+  <value>false</value>
+</property>
+
+<property>
+  <name>dfs.client.cached.conn.retry</name>
+  <value>3</value>
+</property>
+<property>
+  <name>dfs.https.server.keystore.resource</name>
+  <value>ssl-server.xml</value>
+</property>
+
+<property>
+  <name>dfs.client.https.keystore.resource</name>
+  <value>ssl-client.xml</value>
+</property>
+
+<property>
+  <name>dfs.datanode.https.address</name>
+  <value>0.0.0.0:50475</value>
+</property>
+<property>
+  <name>dfs.namenode.https-address</name>
+  <value>0.0.0.0:50470</value>
+</property>
+
 <!-- datanode-->
-<property> 
-     <name>dfs.https.port</name> 
-     <value>50470</value> 
-</property>
-<property>
-     <name>dfs.https.address</name>
-     <value>master</value>
-</property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
 
