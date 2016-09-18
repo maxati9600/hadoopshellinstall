@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+  <name>dfs.block.access.token.enable</name>
+  <value>true</value>
+</property>
+
+<!-- NameNode security config -->
+<property>
+  <name>dfs.namenode.kerberos.principal</name>
+  <value>nn/_HOST@MIN.LOCAL</value>
+</property>
+<property>
+  <name>dfs.namenode.keytab.file</name>
+  <value>/opt/key/nn.service.keytab</value> <!-- path to the HDFS keytab -->
+</property>
+<property>
+  <name>dfs.https.port</name>
+  <value>50470</value>
+</property>
+<property>
+  <name>dfs.https.address</name>
+  <value>master:50470</value>
+</property>
+
+<!-- DataNode security config -->
+<property>
+  <name>dfs.datanode.kerberos.principal</name>
+  <value>dn/_HOST@MIN.LOCAL</value>
+</property>
+<property>
+  <name>dfs.datanode.keytab.file</name>
+  <value>/opt/key/dn.service.keytab</value> <!-- path to the HDFS keytab -->
+</property>
+<property>
+  <name>dfs.datanode.data.dir.perm</name>
+  <value>700</value>
+</property>
+
+<!-- datanode SASL配置 -->
+<property>
+  <name>dfs.datanode.address</name>
+  <value>0.0.0.0:61004</value>
+</property>
+<property>
+  <name>dfs.datanode.http.address</name>
+  <value>0.0.0.0:61006</value>
+</property>
+<property>
+  <name>dfs.http.policy</name>
+  <value>HTTPS_ONLY</value>
+</property>
+<property>
+  <name>dfs.data.transfer.protection</name>
+  <value>integrity</value>
+</property>
+
+<property>
+     <name>dfs.permissions.supergroup</name>
+     <value>supergroup</value>
+     <description>The name of the group of
+     super-users.</description>
+</property>
+
+<property>
+     <name>dfs.web.authentication.kerberos.principal</name>
+     <value>HTTP/_HOST@MIN.LOCAL</value>
+</property>
+<property>
+     <name>dfs.web.authentication.kerberos.keytab</name>
+     <value>/opt/key/spnego.service.keytab</value>
+</property>
+</configuration>

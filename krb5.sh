@@ -75,13 +75,15 @@ echo "generate key for all machine"
 echo "======================================================================="
 for host in $all ;do
 	mkdir -p ${dir}"/"${host}
-	kadmin.local -q "addprinc -randkey hdfs/${host}"
-        kadmin.local -q "addprinc -randkey mapred/${host}"
+	kadmin.local -q "addprinc -randkey nn/${host}"
+	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/nn.service.keytab nn/${host}"
+        kadmin.local -q "addprinc -randkey dn/${host}"
+	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/dn.service.keytab dn/${host}"
         kadmin.local -q "addprinc -randkey HTTP/${host}"
+	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/spnego.service.keytab HTTP/${host}"
         kadmin.local -q "addprinc -randkey yarn/${host}"
-	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/hdfs.keytab hdfs/${host}"
-        kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}"
-        kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/HTTP.keytab HTTP/${host}"
+	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}"
+        kadmin.local -q "addprinc -randkey yarn/${host}"
         kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}"
 done
 #########
