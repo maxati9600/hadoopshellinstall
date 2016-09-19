@@ -40,53 +40,12 @@ echo "Setting hadoop configure"
 cat core.xml  > /opt/hadoop/etc/hadoop/core-site.xml
 cat hdfs.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g" > /opt/hadoop/etc/hadoop/hdfs-site.xml
 cat mapred.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g"  > /opt/hadoop/etc/hadoop/mapred-site.xml
-
-
-cat yarn.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g"  /opt/hadoop/etc/hadoop/yarn-site.xml
-
+cat yarn.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g" > /opt/hadoop/etc/hadoop/yarn-site.xml
+cat ssl-server.xml |sed -e "s#truststore_pass#${truststore_pass}#g"|sed -e "s#keystore_pass#${keystore_pass}#g" >/opt/hadoop/etc/hadoop/ssl-server.xml
+cat ssl-client.xml |sed -e "s#truststore_pass#${truststore_pass}#g" > /opt/hadoop/etc/hadoop/ssl-client.xml
 echo 'slave1
 slave2' > /opt/hadoop/etc/hadoop/slaves
-echo '<configuration>
-<property>
-    <name>ssl.server.keystore.type</name>
-    <value>jks</value>
-</property>
-<property>
-    <name>ssl.server.keystore.keypassword</name>
-    <value>'${keystore_pass}'</value>
-</property>
-<property>
-    <name>ssl.server.keystore.location</name>
-    <value>/opt/key/ca/keystore</value>
-</property>
-<property>
-    <name>ssl.server.truststore.type</name>
-    <value>jks</value>
-</property>
-<property>
-    <name>ssl.server.truststore.location</name>
-    <value>/opt/key/ca/truststore</value>
-</property>
-<property>
-    <name>ssl.server.truststore.password</name>
-    <value>'${truststore_pass}'</value>
-</property>
-</configuration>' > /opt/hadoop/etc/hadoop/ssl-server.xml
 
-echo '<configuration>
-<property>
-    <name>ssl.client.truststore.password</name>
-    <value>'${truststore_pass}'</value>
-</property>
-<property>
-    <name>ssl.client.truststore.type</name>
-    <value>jks</value>
-</property>
-<property>
-    <name>ssl.client.truststore.location</name>
-    <value>/opt/key/ca/truststore</value>
-</property>
-</configuration>' > /opt/hadoop/etc/hadoop/ssl-client.xml
 sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
 openssl req -new -x509 -keyout /opt/key/ca/test_ca_key -out /opt/key/ca/test_ca_cert -days 9999 -subj '/C=TW/ST=Taipei/L=ccu/O=ccu/OU=ant/CN=min.local' -passout pass:${keystore_pass}
 echo "=========================================="
