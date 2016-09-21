@@ -76,6 +76,7 @@ echo "======================================================================="
 for host in $all ;do
 	mkdir -p ${dir}"/"${host}
 	kadmin.local -q "addprinc -randkey nn/${host}"
+        kadmin.local -q "addprinc -randkey HTTP/${host}"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/nn.service.keytab nn/${host}"
 	kadmin.local -q "addprinc -randkey snn/${host}"
         kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/snn.service.keytab snn/${host}"
