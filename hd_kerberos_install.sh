@@ -55,7 +55,7 @@ for client_name in ${client_list}; do
 	echo "==========================================="
 	echo "Now is copy file to ${client_name}"
 	echo "==========================================="
-	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo mkdir -p /opt/key/ &&sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null && sudo chown -Rf ${client_user}.${client_user} /opt/key"
+	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo mkdir -p /opt/key/ &&sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null && sudo chown -Rf ${client_user}.${client_user} /opt"
 	echo "==========================================="
 	echo "produce CA for ${client_name}"
 	echo "==========================================="
