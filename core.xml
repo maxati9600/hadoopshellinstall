@@ -3,7 +3,7 @@
 <configuration>
   <property>
     <name>hadoop.tmp.dir</name>
-    <value>file:/opt/hadoop/tmp</value>
+    <value>/opt/hadoop/tmp</value>
   </property>
   <property>
     <name>fs.default.name</name>
