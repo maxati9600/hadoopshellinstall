@@ -41,8 +41,9 @@ cat core.xml  > /opt/hadoop/etc/hadoop/core-site.xml
 cat hdfs.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g" > /opt/hadoop/etc/hadoop/hdfs-site.xml
 cat mapred.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g"  > /opt/hadoop/etc/hadoop/mapred-site.xml
 cat yarn.xml |sed -e "s#MIN.LOCAL#${krb5_realm}#g" > /opt/hadoop/etc/hadoop/yarn-site.xml
+cat ssl-client.xml|sed -e "s#tstore_pass#${truststore_pass}#g" > /opt/hadoop/etc/hadoop/ssl-client.xml
 cat ssl-server.xml |sed -e "s#truststore_pass#${truststore_pass}#g"|sed -e "s#keystore_pass#${keystore_pass}#g" >/opt/hadoop/etc/hadoop/ssl-server.xml
-cat ssl-client.xml |sed -e "s#truststore_pass#${truststore_pass}#g" > /opt/hadoop/etc/hadoop/ssl-client.xml
+cat container-executor.cfg |sed -e "s#client_user#${client_user}#g" > /opt/hadoop/etc/hadoop/container-executor.cfg
 echo 'slave1
 slave2' > /opt/hadoop/etc/hadoop/slaves
 
@@ -55,7 +56,7 @@ for client_name in ${client_list}; do
 	echo "==========================================="
 	echo "Now is copy file to ${client_name}"
 	echo "==========================================="
-	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo mkdir -p /opt/hadoop/logs &&sudo chmod 777 /opt/hadoop/logs&& sudo mkdir -p /opt/key/ &&sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null && sudo chown -R ${client_user}.${client_user} /opt/key"
+	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo mkdir -p /opt/hadoop/logs &&sudo chmod 777 /opt/hadoop/logs&& sudo mkdir -p /opt/key/ &&sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null && sudo chown -R ${client_user}.${client_user} /opt/key && sudo chown root.${client_user} /opt/hadoop/bin/container-executor && sudo chmod 050 /opt/hadoop/bin/container-executor && sudo chmod u+s /opt/hadoop/bin/container-executor &&sudo chmod g+s /opt/hadoop/bin/container-executor"
 	echo "==========================================="
 	echo "produce CA for ${client_name}"
 	echo "==========================================="
