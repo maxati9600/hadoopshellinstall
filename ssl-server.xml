@@ -4,6 +4,10 @@
     <value>jks</value>
 </property>
 <property>
+    <name>ssl.server.keystore.password</name>
+    <value>keystore_pass</value>
+</property>
+<property>
     <name>ssl.server.keystore.keypassword</name>
     <value>keystore_pass</value>
 </property>

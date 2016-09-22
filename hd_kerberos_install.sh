@@ -55,18 +55,18 @@ for client_name in ${client_list}; do
 	echo "==========================================="
 	echo "Now is copy file to ${client_name}"
 	echo "==========================================="
-	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo mkdir -p /opt/key/ &&sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null && sudo chown -Rf ${client_user}.${client_user} /opt"
+	ssh ${client_user}@${client_name} -t "sudo scp -r ${master_user}@${master_name}:/opt/hadoop/ /opt/ > /dev/null && sudo mkdir -p /opt/hadoop/logs &&sudo chmod 777 /opt/hadoop/logs&& sudo mkdir -p /opt/key/ &&sudo scp -r ${master_user}@${master_name}:/opt/key/ca/ /opt/key/ > /dev/null"
 	echo "==========================================="
 	echo "produce CA for ${client_name}"
 	echo "==========================================="
-	ssh ${client_user}@${client_name} -t 'echo -e "'${keystore_pass}'\n'${keystore_pass}'\n'${keystore_pass}'\n'${keystore_pass}'\n" | keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname "CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW"&& echo -e "${keystore_pass}\n'${keystore_pass}'\nY"|keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert && echo -e "'${keystore_pass}'"|keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert && openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:'${keystore_pass}' && echo -e "'${keystore_pass}'\nY"|keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert && echo -e "'${keystore_pass}'" |keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed'
+	ssh ${client_user}@${client_name} -t 'keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname "CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW"&& keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert &&keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert && openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:'${keystore_pass}' &&keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert &&keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed'
 done
 echo "==========================================="
 echo "produce CA for local host"
 echo "==========================================="
-echo -e "${keystore_pass}\n${keystore_pass}\n${keystore_pass}\n${keystore_pass}\n" | keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname "CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW"
-echo -e "${keystore_pass}\n${keystore_pass}\nY"|keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert
-echo -e "${keystore_pass}"|keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert
+keytool -keystore /opt/key/ca/keystore -alias master -validity 9999 -genkey -keyalg RSA -keysize 2048 -dname "CN=${krb5_realm}, OU=ant, O=ccu, L=ccu, ST=Taipei, C=TW"
+keytool -keystore /opt/key/ca/truststore -alias CARoot -import -file /opt/key/ca/test_ca_cert
+keytool -certreq -alias master -keystore /opt/key/ca/keystore -file /opt/key/ca/cert
 openssl x509 -req -CA /opt/key/ca/test_ca_cert -CAkey /opt/key/ca/test_ca_key -in /opt/key/ca/cert -out /opt/key/ca/cert_signed -days 9999 -CAcreateserial -passin pass:${keystore_pass}
-echo -e "${keystore_pass}\nY"|keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert
-echo -e "${keystore_pass}" |keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed
+keytool -keystore /opt/key/ca/keystore -alias CARoot -import -file /opt/key/ca/test_ca_cert
+keytool -keystore /opt/key/ca/keystore -alias master -import -file /opt/key/ca/cert_signed
