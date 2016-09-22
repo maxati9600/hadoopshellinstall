@@ -85,7 +85,7 @@ for host in $all ;do
         kadmin.local -q "addprinc -randkey HTTP/${host}"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/spnego.service.keytab HTTP/${host}"
         kadmin.local -q "addprinc -randkey yarn/${host}"
-	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/mapred.keytab mapred/${host}"
+	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}"
 done
 #########
 #move key in /opt/key and chang owner
