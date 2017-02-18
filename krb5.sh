@@ -3,30 +3,31 @@
 #	sudo su
 #	sudo apt-get install krb5-kdc krb5-admin-server haveged -y
 
-passwd="q123456"
-username="min"
-master_uname="master"
-krb_realm="MIN.LOCAL"
-slave_uname="slave"
-slave_num=2
-dir="/opt/key"
-#gen slave array. "slave1 skave2 slave3 ...."
+passwd="q123456"      #passwd for krb5 admin 
+username=`users`      #linux user for setting 
+master_uname="master" #Host name for Krb5-kdc
+krb_realm="MIN.LOCAL" #realm(group) for configure krb5.conf
+slave_uname="slave"   #automatic produce client host name prefix  
+slave_num=2           #number of client(slave1 slave2 ...)
+dir="/opt/key"        #kdc key storge path
+
 if [ $EUID -ne 0 ];then
 	echo "This script must be run as root."
 	echo "Run 'sudo su' and run this script again."
 	exit 1
 fi
+
+#gen host name set #########
 for sslave in `seq 1 1 ${slave_num}`;
 do
 	slave=${slave}" "${slave_uname}${sslave}
 done
-##########################################
-#gen all set array
 all=${master_uname}" "${slave}
-#########################
-#Check require package
-require_package="krb5-kdc krb5-admin-server haveged vim"
-for rp in ${require_package} ; do
+############################
+
+#Check require package ############
+KDC_req_package="krb5-kdc krb5-admin-server haveged vim"
+for rp in ${KDC_req_package} ; do
 	tmp=""
 	tmp=`dpkg-query -l |awk '{print $2}'|grep ${rp}`
 	if [ -z "${tmp}" ];
@@ -34,7 +35,9 @@ for rp in ${require_package} ; do
 		rpackage=${rpackage}" "${rp}
 	fi		
 done
+###################################
 
+#install for missing package for KDC ######
 if [ -n "${rpackage}" ]; then
 	clear
 	echo "================================================"
@@ -44,9 +47,13 @@ if [ -n "${rpackage}" ]; then
 	apt-get install ${rpackage} -y
 fi
 
+###########################################
+
+#check config
 echo "================================================"
 echo "Check krb5 require file. and copy in config dir!"
 echo "================================================"
+
 if [ -f "./krb5.conf" ];
 then
 	/bin/cp ./krb5.conf /etc/krb5.conf
@@ -58,12 +65,13 @@ if [ -f "./kdc.conf" ];
 then
 	/bin/cp ./kdc.conf /etc/krb5kdc/kdc.conf
 else
-	echo "./krb5.conf not exist please clone it from github!"
+	echo "./kdc.conf not exist please clone it from github!"
         exit
 fi
 for host in ${all}; do
 	echo "*/${host}@${krb_realm} *" >>/etc/krb5kdc/kadm5.acl
 done
+
 service krb5-admin-server restart
 echo -e "${passwd}\n${passwd}\n" |krb5_newrealm
 echo -e "${passwd}\n${passwd}" |kadmin.local -q "addprinc admin/master"
