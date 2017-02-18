@@ -18,4 +18,4 @@ openjdk	: 1.8.0<br>
 
 ``
 sudo ./krb5.sh``
-``sudo ./hd_kerberos_install.sh``
+<BR>``sudo ./hd_kerberos_install.sh``
