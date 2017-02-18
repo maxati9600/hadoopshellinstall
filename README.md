@@ -8,14 +8,14 @@ openjdk	: 1.8.0<br>
 1.setup ssh key login for master(kdc server) to slave<br>
 2.copy key to slave
 
-#Install krb5 for ubuntu 
 
-``sudo ./krb5.sh``
-
-#Install hadoop script
+#Install
+##Install hadoop script
 
 ``sudo ./hd_install.sh``
 
-#install hadoop with kerberos
+##Install hadoop with secure mode (kerberos)
 
-``sudo ./hd_kerberos_install.sh``
+``
+sudo ./krb5.sh<br>
+sudo ./hd_kerberos_install.sh``
