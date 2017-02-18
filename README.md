@@ -17,5 +17,5 @@ openjdk	: 1.8.0<br>
 ##Install hadoop with secure mode (kerberos)
 
 ``
-sudo ./krb5.sh<br>
-sudo ./hd_kerberos_install.sh``
+sudo ./krb5.sh``
+``sudo ./hd_kerberos_install.sh``
