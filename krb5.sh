@@ -6,19 +6,31 @@
 passwd="q123456"            #passwd for krb5 admin 
 username=`users`            #linux user for setting 
 master_host_name="master"   #Host name for Krb5-kdc
-krb_realm="MIN.LOCAL"       #realm(group) for configure krb5.conf
+krb_realm="CSIE.CCU.LOCAL"       #realm(group) for configure krb5.conf
 slave_uname="slave"         #automatic produce client host name prefix  
 slave_num=2                 #number of client(slave1 slave2 ...)
 dir="/opt/key"              #kdc key storge path
 krb5_conf_file="krb5.conf kdc.conf" #krb5 configure file list
 krb5_conf_file_path[0]="/etc/krb5.conf"
 krb5_conf_file_path[1]="/etc/krb5kdc/kdc.conf"
+var_list="username passwd master_host_name krb_realm slave_uname slave_num dir"
 
+#set variable manually ##################
+for var in ${var_list};
+do
+    eval t_content="\${$var}"
+    echo "Input $var (Default= ${t_content}):\c"
+    read tmpv
+    if [  "${tmpv}" != "" ];then
+        eval '$var'="${tmpv}"
+    fi
+done
+#########################################
 
 #privilege check ######
 if [ $EUID -ne 0 ];then
-	echo "This script must be run as root."
-	echo "Run 'sudo su' and run this script again."
+	echo "\033[31mThis script must be run as root."
+	echo "Run 'sudo su' and run this script again.\033[0m"
 	exit 1
 fi
 #####################
@@ -65,7 +77,7 @@ for conf_file in ${krb5_conf_file}; do
     then
 	    /bin/cp ./${conf_file} ${krb5_conf_file_path[$count]}
     else
-	    echo "./krb5.conf not exist please clone it from github!"
+	    echo "\033[31m./${conf_file} not exist please clone it from github!\033[0m"
 	    exit
     fi
     count=$[$count+1]
@@ -78,7 +90,6 @@ for host in ${all}; do
     ## account / group @ domain  permission
     ## permission * means admin
     echo "*/${host}@${krb_realm} *" >>/etc/krb5kdc/kadm5.acl 
-
 done
 ####################################
 
@@ -99,15 +110,15 @@ echo "======================================================================="
 for host in $all ;do
 	mkdir -p ${dir}"/"${host}
 	kadmin.local -q "addprinc -randkey nn/${host}"
-        kadmin.local -q "addprinc -randkey HTTP/${host}"
+    kadmin.local -q "addprinc -randkey HTTP/${host}"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/nn.service.keytab nn/${host}"
 	kadmin.local -q "addprinc -randkey snn/${host}"
-        kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/snn.service.keytab snn/${host}"
-        kadmin.local -q "addprinc -randkey dn/${host}"
+    kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/snn.service.keytab snn/${host}"
+    kadmin.local -q "addprinc -randkey dn/${host}"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/dn.service.keytab dn/${host}"
-        kadmin.local -q "addprinc -randkey HTTP/${host}"
+    kadmin.local -q "addprinc -randkey HTTP/${host}"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/spnego.service.keytab HTTP/${host}"
-        kadmin.local -q "addprinc -randkey yarn/${host}"
+    kadmin.local -q "addprinc -randkey yarn/${host}"
 	kadmin.local -q "ktadd -norandkey -k ${dir}/${host}/yarn.keytab yarn/${host}"
 done
 #########
@@ -127,7 +138,9 @@ echo "======================================================================="
 for sHost in ${slave} ; do
 	echo "Start copy to "${sHost}
 	echo "mkdir for hadoop "${sHost}":"${dir}" owner:"${username}
-	echo "You might need to enter ${sHost}'s root password "
+    echo "\n\033[31m**********************************************************"
+	echo "    You might need to enter ${sHost}'s ROOT password "
+    echo "**********************************************************\033[0m\n"
 	ssh -t ${username}@${sHost} "sudo mkdir -p ${dir}/ca && sudo chown ${username}.${username} ${dir} && sudo apt-get install krb5-user krb5-config -y "
 	echo "file copy"
 	scp ${dir}/${sHost}/* ${username}@${sHost}:${dir}/ 
