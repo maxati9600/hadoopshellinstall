@@ -76,6 +76,9 @@ for conf_file in ${krb5_conf_file}; do
     if [ -f "$conf_file" ];
     then
 	    /bin/cp ./${conf_file} ${krb5_conf_file_path[$count]}
+        sed -i -e "s#{REALM_UPPER}#${krb_realm^^}#i" ${krb5_conf_file_path[$count]}
+        sed -i -e "s#{DOMAIN_LOWER}#${krb_realm,,}#i" ${krb5_conf_file_path[$count]}
+        sed -i -e "s#{MASTER_NAME}#${master_host_name}#i" ${krb5_conf_file_path[$count]}
     else
 	    echo "\033[31m./${conf_file} not exist please clone it from github!\033[0m"
 	    exit
