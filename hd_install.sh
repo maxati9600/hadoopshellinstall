@@ -1,8 +1,12 @@
 echo "Start unzip hadoop file.."
-tar -C /opt -zxf hadoop-2.7.2.tar.gz
+wget http://apache.stu.edu.tw/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
+tar -C /opt -zxf hadoop-2.7.3.tar.gz
 echo "Moving folder to /opt/hadoop/"
 
-mv /opt/hadoop-2.7.2 /opt/hadoop
+mv /opt/hadoop-2.7.3 /opt/hadoop
+MasterName="master"
+SlavePrefix="slave0"
+SlaveNum=7
 echo "Create folder for hadoop"
 mkdir -p /opt/hadoop/tmp
 mkdir -p /opt/hadoop/dfs/dn
@@ -18,7 +22,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
   </property>
   <property>
     <name>fs.default.name</name>
-    <value>hdfs://master:54310</value>
+    <value>hdfs://'${MasterName}':54310</value>
   </property>
 </configuration>' > /opt/hadoop/etc/hadoop/core-site.xml
 
@@ -35,7 +39,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
 <property>
     <name>dfs.replication</name>
-    <value>2</value>
+    <value>'${SlaveNum}'</value>
 </property>
 </configuration>' > /opt/hadoop/etc/hadoop/hdfs-site.xml
 
@@ -45,7 +49,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 <property>
  <name>mapred.job.tracker</name>
-    <value>master:54311</value>
+    <value>'${MasterName}':54311</value>
 </property>
 <property>
     <name>mapreduce.framework.name</name>
@@ -63,27 +67,30 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </property>
  <property>
     <name>yarn.resourcemanager.scheduler.address</name>
-    <value>master:8030</value>
+    <value>'${MasterName}':8030</value>
   </property> 
   <property>
     <name>yarn.resourcemanager.address</name>
-    <value>master:8032</value>
+    <value>'${MasterName}':8032</value>
   </property>
   <property>
     <name>yarn.resourcemanager.webapp.address</name>
-    <value>master:8088</value>
+    <value>'${MasterName}':8088</value>
   </property>
   <property>
     <name>yarn.resourcemanager.resource-tracker.address</name>
-    <value>master:8031</value>
+    <value>'${MasterName}':8031</value>
   </property>
   <property>
     <name>yarn.resourcemanager.admin.address</name>
-    <value>master:8033</value>
+    <value>'${MasterName}':8033</value>
   </property>
 </configuration>' > /opt/hadoop/etc/hadoop/yarn-site.xml
-
-echo 'slave1
-slave2' > /opt/hadoop/etc/hadoop/slaves
-
-sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-8-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
+slaveTmp=""
+for i in $(seq 1 $SlaveNum);
+do
+	slaveTmp=${slaveTmp}"\n"${SlavePrefix}${i}
+done
+echo -e ${slaveTmp} > /opt/hadoop/etc/hadoop/slaves
+chown -R hduser:hadoop /opt/hadoop
+sed -i -e 's#${JAVA_HOME}#/usr/lib/jvm/java-7-openjdk-amd64#i' /opt/hadoop/etc/hadoop/hadoop-env.sh
