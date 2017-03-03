@@ -75,6 +75,11 @@ echo "================================================"
 echo "Check krb5 require file. and copy in config dir!"
 echo "================================================"
 service krb5-admin-server stop
+service krb5-kdc stop
+sudo mkdir /var/log/kerberos
+sudo mkdir /var/log/kerberos
+sudo touch /var/log/kerberos/{krb5kdc,kadmin,krb5lib}.log
+sudo chmod -R 750  /var/log/kerberos
 count=0
 for conf_file in ${krb5_conf_file}; do
     if [ -f "$conf_file" ];
@@ -91,10 +96,17 @@ for conf_file in ${krb5_conf_file}; do
     fi
     count=$[$count+1]
 done
+if [ -f /var/lib/krb5kdc/principal ] ; then
+	echo "[-]Rmove old principal file..."
+	rm -rf /var/lib/krb5kdc/principal*
+fi
+echo "[+]Create new database..."
+echo -e "${passwd}\n${passwd}\n" |krb5_newrealm
+
 #########################
 # recreate database for kerberos#######################
-echo "[*]Recreate krb5 database to fix user setting..."
-echo -e "${passwd}\n${passwd}" |kdb5_util create -r ${krb_realm^^} -s
+#echo "[*]Recreate krb5 database to fix user setting..."
+#echo -e "${passwd}\n${passwd}" |kdb5_util create -r ${krb_realm^^} -s
 # add host account acl for krb5 ####
 echo "[*]Adding kadm5.acl..."
 if [ -f /etc/krb5kdc/kadm5.acl ] ; then
@@ -115,6 +127,7 @@ echo "================================================"
 echo "Create keytable for all all Host"
 echo "================================================"
 service krb5-admin-server start
+service krb5-kdc start
 echo -e "${passwd}\n${passwd}" |kadmin.local -q "addprinc admin/${master_host_name}"
 echo -e "${passwd}" |kinit admin/${master_host_name}
 klist
@@ -157,8 +170,9 @@ for sHost in ${slave} ; do
 	ssh -t ${user_root}@${sHost} "sudo mkdir -p ${dir}/ca && sudo chown -R ${user_root}.${groupid} ${dir} && sudo apt-get install krb5-user krb5-config -y "
 	echo "[+]Copy file to ${sHost}..."
 	scp ${dir}/${sHost}/* ${user_root}@${sHost}:${dir}/
+	scp ${krb5_conf_file_path[0]} ${user_root}@${sHost}:/tmp/
 	echo "[*]Change file owner:"${username}" group:"${groupid}
-	ssh -t ${user_root}@${sHost} "sudo chown -R ${username}.${groupid} ${dir}" 
+	ssh -t ${user_root}@${sHost} "sudo chown -R ${username}.${groupid} ${dir}&& sudo mv /tmp/krb5.conf /etc/krb5.conf && sudo chown root.root /etc/krb5.conf" 
 done
 echo "[*]Move local(${master_host_name}) key to ${dir}..."
 mv /opt/key/${master_host_name}/* ${dir}
